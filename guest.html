@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>오늘 밤 베개 상담</title>
+<title>베개 상담</title>
 <link rel="stylesheet" href="common.css">
 <script>
 /* ============================================================
@@ -14,9 +14,9 @@ const CONFIG = {
   preferAdjust: { low: -1, mid: 0, high: +1 },      // Q2 평소 높이 보정
   minSheets: 1,
   maxSheets: 3,
-  discountPrefix: 'STAY-',                           // 할인 코드 = 접두어 + 숙소이름
+  discountPrefix: 'POOK-',                           // 할인 코드 = 접두어 + 가게이름
   buyUrl: '#',                                       // 구매 링크 (비워 둠)
-  defaultStay: '이 숙소',                            // ?stay= 가 없을 때
+  defaultStay: '이 가게',                            // ?stay= 가 없을 때
 };
 </script>
 <style>
@@ -89,8 +89,8 @@ const CONFIG = {
   <!-- 시작 -->
   <section class="screen" data-s="start">
     <div class="start-photo crop" data-crop="11.webp 0 440 860 1180" data-alt="데일리핏 베개를 베고 자는 모습"></div>
-    <p class="welcome"><b class="js-stay"></b> · 오늘 밤 베개 상담</p>
-    <h1 class="h1" style="margin:8px 0 12px">오늘 밤 베개,<br>내 몸에 맞춰 볼까요?</h1>
+    <p class="welcome"><b class="js-stay"></b> · 베개 체험존</p>
+    <h1 class="h1" style="margin:8px 0 12px">내 베개 높이,<br>여기서 맞춰 볼까요?</h1>
     <p class="lead">평소 어떻게 주무시는지 세 가지만 여쭤볼게요. 거기에 맞춰 베개 안 시트를 몇 장 넣으면 좋을지 알려 드려요.</p>
     <div class="grow"></div>
     <button class="btn btn-navy" type="button" data-go="q1" style="margin-top:28px">상담 시작하기</button>
@@ -130,7 +130,7 @@ const CONFIG = {
 
   <!-- 결과 -->
   <section class="screen" data-s="result">
-    <p class="result-k">상담 결과 · 오늘 밤 추천 높이</p>
+    <p class="result-k">상담 결과 · 내게 맞는 높이</p>
     <h2 class="result-v">시트 <b class="js-n"></b>장을<br>넣어 주세요</h2>
     <div class="stack">
       <div><div class="bars js-bars"></div><div class="base"></div></div>
@@ -179,15 +179,16 @@ const CONFIG = {
   <!-- 마지막 -->
   <section class="screen" data-s="end">
     <div class="end-photo crop" data-crop="9.webp 40 690 820 1180" data-alt="데일리핏 베개"></div>
-    <p class="eyebrow">포옥드림 파트너 숙소</p>
-    <h2 class="h1" style="font-size:26px;margin:8px 0 12px"><span class="js-stay-topic"></span><br>포옥드림 파트너 숙소예요.</h2>
-    <p class="lead">오늘 밤이 편하셨다면,<br>집에서도 같은 베개로.</p>
+    <p class="eyebrow">포옥드림 파트너 가게</p>
+    <h2 class="h1" style="font-size:26px;margin:8px 0 12px"><span class="js-stay-topic"></span><br>포옥드림 파트너 가게예요.</h2>
+    <p class="lead">오늘 맞춰 본 높이 그대로,<br>집에서도 같은 베개로.</p>
     <div class="codebox">
       <code id="code"></code>
       <button type="button" id="copyBtn">복사</button>
     </div>
     <p class="note">할인 코드 예시예요. 할인율은 <span class="tbd">(가안)</span></p>
     <p class="mysetting">오늘 내 설정 · <b class="js-summary" style="color:var(--ink)"></b></p>
+    <p class="note" style="margin-top:8px">다 써 보셨다면, 다음 손님을 위해 시트 3장을 모두 넣고 지퍼를 닫아 주세요.</p>
     <div class="actions">
       <a class="btn btn-navy" id="buyBtn" href="#">데일리핏 보러 가기</a>
       <button class="btn btn-ghost" type="button" id="restart">처음부터 다시 하기</button>
@@ -202,7 +203,7 @@ const state = { pose:null, prefer:null, neck:null, n:null };
 const history_ = [];
 let current = null;
 
-document.title = `${stay} · 오늘 밤 베개 상담`;
+document.title = `${stay} · 베개 상담`;
 document.querySelectorAll('.js-stay').forEach(el => el.textContent = stay);
 document.getElementById('stayChip').textContent = stay;
 // 받침 유무로 은/는 선택 (한글이 아니면 '은(는)')
@@ -231,7 +232,7 @@ function renderStack(){
   const off = CONFIG.maxSheets - state.n;
   document.querySelectorAll('.js-n-text').forEach(el => el.textContent = `시트 ${state.n}장 넣기`);
   document.querySelectorAll('.js-off-text').forEach(el =>
-    el.textContent = off > 0 ? `뺀 ${off}장은 객실 라탄함에 보관해 주세요.` : '시트 3장을 모두 넣어요.');
+    el.textContent = off > 0 ? `뺀 ${off}장은 베개 옆에 잘 두어 주세요.` : '시트 3장을 모두 넣어요.');
   document.querySelector('.js-neck').hidden = state.neck !== 'yes';
   document.querySelector('.js-summary').textContent =
     `시트 ${state.n}장` + (state.neck === 'yes' ? ' + 목 쪽 조금 더' : '');
@@ -267,11 +268,11 @@ document.querySelectorAll('[data-fb]').forEach(b => b.onclick = () => {
   const k = document.querySelector('.js-adj-k'), t = document.querySelector('.js-adj-title'), body = document.querySelector('.js-adj-body');
   if (fb === 'high'){
     k.textContent = '아직 높다면';
-    if (state.n > CONFIG.minSheets){ state.n--; t.textContent = '시트 1장을 빼 주세요'; body.textContent = `이제 ${state.n}장이에요. 뺀 시트는 라탄함에 넣어 두세요.`; }
+    if (state.n > CONFIG.minSheets){ state.n--; t.textContent = '시트 1장을 빼 주세요'; body.textContent = `이제 ${state.n}장이에요. 뺀 시트는 베개 옆에 잘 두어 주세요.`; }
     else { t.textContent = '이미 가장 낮은 높이예요'; body.textContent = '남은 시트 안 충전재를 조금 덜어 내면 더 낮아져요.'; }
   } else {
     k.textContent = '아직 낮다면';
-    if (state.n < CONFIG.maxSheets){ state.n++; t.textContent = '시트 1장을 넣어 주세요'; body.textContent = `이제 ${state.n}장이에요. 라탄함에 있는 시트를 꺼내 넣어 주세요.`; }
+    if (state.n < CONFIG.maxSheets){ state.n++; t.textContent = '시트 1장을 넣어 주세요'; body.textContent = `이제 ${state.n}장이에요. 옆에 둔 시트를 다시 넣어 주세요.`; }
     else { t.textContent = '이미 가장 높은 높이예요'; body.textContent = '목 쪽이 허전하면 시트의 목 쪽 칸(넥서포트존) 충전재를 조금 더 풍성하게 맞춰 보세요.'; }
   }
   renderStack();
