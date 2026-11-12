@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>포옥스테이 파트너 숙소 제안</title>
+<title>포옥스테이 파트너 가게 제안</title>
 <link rel="stylesheet" href="common.css">
 <style>
   section{padding:56px 24px}
@@ -12,7 +12,8 @@
   .hero .h1{font-size:31px;margin:14px 0 18px}
   .hero .h1 b{font-weight:600;color:#fff}
   .hero .lead{color:#d6d0c4;font-size:17px}
-  .hero .btn{margin:28px 0 36px;background:#f5f1eb;color:var(--navy)}
+  .hero .promise{margin-top:18px;padding:14px 16px;border:1px solid #4a4c44;border-radius:12px;font-size:17px;line-height:1.55;color:#fff}
+  .hero .btn{margin:24px 0 36px;background:#f5f1eb;color:var(--navy)}
   .hero-photo{margin:0 -24px}
   .fade-top{position:relative}
   .fade-top::before{content:"";position:absolute;inset:0 0 auto 0;height:70px;background:linear-gradient(var(--olive),transparent);z-index:1}
@@ -23,6 +24,7 @@
   .num-list .n{font-family:var(--serif);color:var(--faint);font-size:15px;padding-top:3px}
   .num-list b{display:block;font-size:19px;line-height:1.5;margin-bottom:4px}
   .num-list p{color:var(--sub);font-size:16px}
+  .num-list .who{display:inline-block;font-size:12px;color:var(--sub);background:#efe9df;border-radius:4px;padding:0 6px;margin-bottom:4px}
 
   .grid4{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:28px}
   .grid4 figure{background:var(--paper);border-radius:12px;overflow:hidden}
@@ -38,6 +40,20 @@
   .flow .arr{color:var(--faint);padding-top:16px;font-size:18px}
   .flow-foot{margin-top:20px;padding-top:16px;border-top:1px dashed var(--line);font-size:15px;color:var(--sub)}
 
+  .free{background:var(--navy);color:#eef0f5}
+  .free .eyebrow{color:#aeb7cc}
+  .free .big{font-family:var(--serif);font-size:30px;line-height:1.4;margin:10px 0 6px}
+  .free .big b{font-weight:600;color:#fff}
+  .free .sub{color:#c4cbdb;font-size:17px}
+  .free ul{list-style:none;margin-top:26px;border-top:1px solid #34426a}
+  .free li{display:grid;grid-template-columns:1fr auto;gap:12px;padding:16px 0;border-bottom:1px solid #34426a;font-size:17px}
+  .free li span{color:#aeb7cc;font-size:15px}
+  .free .note{color:#9aa4bd;margin-top:16px}
+  .free .tbd{color:#e0b77c}
+  .steps3{list-style:none;margin-top:26px;counter-reset:s}
+  .steps3 li{counter-increment:s;display:flex;gap:14px;padding:10px 0;font-size:17px}
+  .steps3 li::before{content:counter(s,decimal-leading-zero);font-family:var(--serif);color:#7f8aa6;font-size:15px;padding-top:2px}
+
   .win{margin-top:16px;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:22px 20px}
   .win:first-of-type{margin-top:26px}
   .win-no{font-family:var(--serif);color:var(--faint);font-size:15px}
@@ -49,12 +65,6 @@
   .win dt{font-size:13px;font-weight:700;text-align:center;border-radius:6px;padding:4px 0;background:#efe9df;color:var(--sub)}
   .win dl div:last-child dt{background:var(--navy);color:#fff}
   .win dd{font-size:16px;font-weight:500}
-  .kit{margin-top:16px;background:var(--navy);color:#eef0f5;border-radius:16px;padding:22px 20px}
-  .kit .k{font-size:14px;color:#aeb7cc;margin-bottom:6px}
-  .kit ul{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
-  .kit li{padding:10px 0;border-top:1px solid #34426a;font-size:16px;line-height:1.45}
-  .kit li small{display:block;color:#9aa4bd;font-size:13px}
-  .kit .tbd{color:#e0b77c}
 
   .benefit{margin-top:26px;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:22px 20px}
   .benefit+.benefit{margin-top:12px}
@@ -64,41 +74,33 @@
   .benefit p{font-size:15px;color:var(--sub)}
   .mini{min-height:44px;font-size:15px;width:auto;padding:8px 16px;border-radius:10px}
 
-  .start{background:var(--paper)}
-  .price{display:grid;grid-template-columns:1fr 1fr;margin-top:26px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-  .price div{padding:20px 4px}
-  .price div+div{border-left:1px solid var(--line);padding-left:18px}
-  .price .k{font-size:14px;color:var(--sub)}
-  .price .v{font-family:var(--serif);font-size:26px;line-height:1.3;margin-top:4px}
-  .steps3{list-style:none;margin-top:26px;counter-reset:s}
-  .steps3 li{counter-increment:s;display:flex;gap:14px;padding:10px 0;font-size:17px}
-  .steps3 li::before{content:counter(s,decimal-leading-zero);font-family:var(--serif);color:var(--faint);font-size:15px;padding-top:2px}
-
-  .apply{padding-bottom:120px}
+  .apply{padding-bottom:56px}
   form{margin-top:26px;display:grid;gap:18px}
   label{display:grid;gap:8px;font-size:16px;font-weight:500}
   input,select{font:inherit;font-size:18px;min-height:58px;padding:12px 16px;border-radius:12px;border:1.5px solid var(--line);background:#fff;color:var(--ink);width:100%}
   input:focus,select:focus{outline:none;border-color:var(--navy)}
   .err{color:#a1452f;font-size:14px;min-height:0}
-  .done{text-align:left}
   .done .h1{margin:14px 0 14px}
   .done .links{display:grid;gap:10px;margin-top:26px}
 
+  .closing{padding:64px 24px 72px;text-align:center;border-top:1px solid var(--line)}
+  .closing p{font-family:var(--serif);font-size:23px;line-height:1.6;letter-spacing:-0.02em}
   .sticky{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:100%;max-width:430px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(transparent,var(--bg) 30%);z-index:10;transition:opacity .2s}
   .sticky.hide{opacity:0;pointer-events:none}
-  footer{padding:32px 24px 120px;font-size:14px;color:var(--faint);border-top:1px solid var(--line)}
+  footer{padding:28px 24px 48px;font-size:14px;color:var(--faint);border-top:1px solid var(--line)}
   footer a{color:var(--sub)}
 </style>
 </head>
 <body>
 <div class="app">
 
-  <!-- ① 첫 화면 훅 -->
+  <!-- ① 첫 화면 -->
   <header class="hero">
-    <p class="eyebrow">강릉·양양 소규모 숙소 파트너 제안 · 포옥스테이<span style="opacity:.6">(가칭)</span></p>
-    <h1 class="h1">“베개 바꿔 주세요”라는<br>난감한 요청,<br><b>손님 맞춤으로<br>바로 해결하세요.</b></h1>
-    <p class="lead">높이 조절 베개 <b style="color:#fff">데일리핏</b>과 체크인 QR <b style="color:#fff">‘오늘 밤 베개 상담’</b>으로,<br>손님이 사장님 도움 없이 스스로 높이를 맞춰요.</p>
-    <a class="btn" href="#apply">파트너 숙소 신청하기</a>
+    <p class="eyebrow">숙소·카페·체험 공간 · 강릉 작은 가게 파트너 제안 · 포옥스테이<span style="opacity:.6">(가칭)</span></p>
+    <h1 class="h1">손님이 직접 눕고<br>맞춰 보는 베개 체험존,<br><b>우리 가게에<br>무료로 들여 보세요.</b></h1>
+    <p class="lead">높이 조절 베개 <b style="color:#fff">데일리핏</b>과 QR <b style="color:#fff">‘베개 상담’</b>으로,<br>손님이 사장님 도움 없이 스스로 높이를 맞춰요.</p>
+    <p class="promise">홍보는 포옥드림이 함께해요.<br>사장님은 공간만 내어 주세요.</p>
+    <a class="btn" href="#apply">파트너 가게 신청하기</a>
     <div class="hero-photo fade-top">
       <div class="crop" data-crop="11.webp 0 440 860 1180" data-alt="데일리핏 베개를 베고 편히 자는 모습"></div>
     </div>
@@ -106,14 +108,13 @@
 
   <!-- ② 문제 -->
   <section>
-    <p class="eyebrow">사장님들이 말하는 베개 고민</p>
-    <h2 class="h2" style="margin-top:10px">손님마다 맞는 높이가<br>다른데, 다 갖출 순 없잖아요.</h2>
+    <p class="eyebrow">작은 가게 사장님들의 고민</p>
+    <h2 class="h2" style="margin-top:10px">좋은 공간을 만들었는데,<br>알리고 남기기는 어렵잖아요.</h2>
     <div class="crop" data-crop="4.webp 0 470 860 1130" data-alt="베개를 눌러 보는 손" style="margin:26px -24px 0"></div>
     <ul class="num-list">
-      <li><span class="n">01</span><div><b>바꿔 달라는데, 해 드릴 게 없어요</b><p>“베개가 불편해요” 하시면 결국 수건을 접어 쓰시라고 할 수밖에 없죠.</p></div></li>
-      <li><span class="n">02</span><div><b>높이별 베개를 여러 개 두기 어려워요</b><p>여분 솜베개·구스베개를 객실마다 갖추면 비용이 들고, 보관할 자리도 마땅치 않아요.</p></div></li>
-      <li><span class="n">03</span><div><b>밤늦게 객실까지 다녀와야 해요</b><p>연락이 오면, 쉬다가도 다른 베개를 들고 나가야 하죠.</p></div></li>
-      <li><span class="n">04</span><div><b>홍보를 혼자 이어 가기 어려워요</b><p>반짝 알리는 건 해 볼 만해도, 꾸준히 새 이야기를 만들어 올리기는 쉽지 않아요.</p></div></li>
+      <li><span class="n">01</span><div><b>우리 가게만의 체험거리가 필요해요</b><p>비슷해 보이는 가게들 사이에서, 손님이 기억하고 다시 찾을 이유를 만들기 쉽지 않아요.</p></div></li>
+      <li><span class="n">02</span><div><b>홍보를 혼자 이어 가기 어려워요</b><p>반짝 알리는 건 해 볼 만해도, 꾸준히 새 이야기를 만들어 올리기는 쉽지 않아요.</p></div></li>
+      <li><span class="n">03</span><div><span class="who">숙소라면</span><b>“베개 바꿔 주세요” 해도 해 드릴 게 없어요</b><p>높이별 베개를 여러 개 둘 수도 없고, 결국 수건을 접어 쓰시라고 할 수밖에 없죠.</p></div></li>
     </ul>
   </section>
 
@@ -124,125 +125,116 @@
     <p class="lead" style="margin-top:14px">데일리핏은 안에 든 시트 3장을 빼고 더해 높이를 맞추는 베개예요. 목 쪽은 따로 봉제된 넥서포트존으로 조금 더 받칠 수 있어요.</p>
 
     <div class="grid4">
-      <figure><div class="crop" data-crop="9.webp 40 690 820 1180" data-alt="데일리핏 베개"></div><figcaption>객실에는 베개 하나만</figcaption></figure>
-      <figure><div class="crop" data-crop="5.webp 0 760 534 1220" data-alt="커버를 열어 시트를 꺼내는 모습"></div><figcaption>지퍼를 열고</figcaption></figure>
+      <figure><div class="crop" data-crop="9.webp 40 690 820 1180" data-alt="데일리핏 베개"></div><figcaption>가게에는 베개만 두면</figcaption></figure>
+      <figure><div class="crop" data-crop="5.webp 0 760 534 1220" data-alt="커버를 열어 시트를 꺼내는 모습"></div><figcaption>손님이 지퍼를 열고</figcaption></figure>
       <figure><div class="crop" data-crop="7.webp 50 440 480 810" data-alt="베개 안에 겹쳐 들어간 시트 3장"></div><figcaption>시트를 한 장씩 빼거나 넣고</figcaption></figure>
-      <figure><div class="crop" data-crop="11.webp 120 520 860 1180" data-alt="베개를 베고 자는 모습"></div><figcaption>내게 맞는 높이로 잠들어요</figcaption></figure>
+      <figure><div class="crop" data-crop="11.webp 120 520 860 1180" data-alt="베개를 베고 자는 모습"></div><figcaption>내게 맞는 높이를 찾아요</figcaption></figure>
     </div>
 
     <div class="flow">
-      <p class="flow-title">손님이 혼자 맞추는 흐름</p>
+      <p class="flow-title">손님이 혼자 맞춰 보는 흐름</p>
       <ol>
         <li class="step">
           <svg viewBox="0 0 54 54" fill="none" stroke="#1f2a44" stroke-width="2"><rect x="7" y="7" width="40" height="40" rx="8"/><rect x="14" y="14" width="10" height="10"/><rect x="30" y="14" width="10" height="10"/><rect x="14" y="30" width="10" height="10"/><path d="M31 31h3v3h-3zM37 37h3v3h-3zM31 38h2M38 31h2"/></svg>
-          <b>체크인 QR</b><span>객실 카드를<br>폰으로 찍기</span>
+          <b>QR 찍기</b><span>체험존 카드를<br>폰으로</span>
         </li>
         <li class="arr" aria-hidden="true">→</li>
         <li class="step">
           <svg viewBox="0 0 54 54" fill="none" stroke="#1f2a44" stroke-width="2"><rect x="13" y="5" width="28" height="44" rx="6"/><path d="M19 17h16M19 25h16M19 33h10" stroke-linecap="round"/></svg>
-          <b>베개 상담</b><span>오늘 밤 자세·<br>높이·목 이야기</span>
+          <b>베개 상담</b><span>자세·높이·목<br>세 가지 이야기</span>
         </li>
         <li class="arr" aria-hidden="true">→</li>
         <li class="step">
           <svg viewBox="0 0 54 54" fill="none" stroke="#1f2a44" stroke-width="2"><rect x="6" y="30" width="42" height="7" rx="3.5" fill="#cddff0"/><rect x="6" y="21" width="42" height="7" rx="3.5" fill="#cddff0"/><rect x="6" y="12" width="42" height="7" rx="3.5" stroke-dasharray="3 3"/><path d="M27 44v6M24 47l3 3 3-3" stroke-linecap="round"/></svg>
-          <b>직접 조절</b><span>“시트 ○장”<br>안내대로 넣고 빼기</span>
+          <b>직접 조절</b><span>“시트 ○장”<br>안내대로 맞추기</span>
         </li>
       </ol>
-      <p class="flow-foot">사장님은 체크인 때 열쇠와 함께 QR 카드를 건네거나, 객실에 두기만 하면 돼요. 뺀 시트는 함께 드리는 라탄함에 보관해요.<br><a href="guest.html?stay=%EC%86%94%ED%96%A5%EA%B8%B0%ED%8E%9C%EC%85%98" style="color:var(--navy);font-weight:500">손님 화면 미리보기 →</a></p>
+      <p class="flow-foot">숙소는 객실에, 카페·체험 공간은 손님이 쉬어 가는 자리에 두면 돼요.<br><a href="guest.html?stay=%EC%86%94%ED%96%A5%EA%B8%B0%ED%8E%9C%EC%85%98" style="color:var(--navy);font-weight:500">손님 화면 미리보기 →</a></p>
     </div>
   </section>
 
-  <!-- ④ 협업 구조 -->
-  <section style="padding-top:8px">
+  <!-- ④ 무료 설치 -->
+  <section class="free">
+    <p class="eyebrow">시작 방법</p>
+    <p class="big"><b>베개 체험존<br>무료 설치</b></p>
+    <p class="sub">곳당 베개 최대 10개까지, 공간에 맞춰 설치해 드려요.</p>
+    <ul>
+      <li>데일리핏 베개 <span>곳당 최대 10개</span></li>
+      <li>QR 베개 상담 카드 <span>가게 이름 넣어 제작</span></li>
+      <li>파트너 배지 <span>매장·예약 페이지용</span></li>
+    </ul>
+    <ol class="steps3">
+      <li>아래 신청서 작성</li>
+      <li>포옥드림이 연락드려 공간 확인</li>
+      <li>베개 체험존 설치</li>
+    </ol>
+    <p class="note">설치 기간·운영 방식은 상담 후 정해요. <span class="tbd">(가안)</span></p>
+  </section>
+
+  <!-- ⑤ 협업 구조 -->
+  <section>
     <p class="eyebrow">협업 구조</p>
-    <h2 class="h2" style="margin-top:10px">키트만 드리고<br>끝나지 않아요.</h2>
-    <p class="lead" style="margin-top:12px">숙소와 포옥드림이 <span class="mark">서로 이기는 구조 2가지</span>로 함께 가요.</p>
+    <h2 class="h2" style="margin-top:10px">설치하고<br>끝나지 않아요.</h2>
+    <p class="lead" style="margin-top:12px">가게와 포옥드림이 <span class="mark">서로 이기는 구조 2가지</span>로 함께 가요.</p>
 
     <article class="win">
       <p class="win-no">01</p>
-      <h3>객실을 체험 매장으로</h3>
-      <p>투숙객이 하룻밤 써 보고 <b>숙소 할인 코드</b>로 베개를 사면, 판매 수익 일부를 숙소에 돌려드려요. <span class="tbd">(비율 미정)</span></p>
+      <h3>가게를 체험 매장으로</h3>
+      <p>손님이 가게에서 직접 써 보고, 마음에 들면 <b>가게 전용 할인 코드</b>로 구매해요.</p>
       <dl>
-        <div><dt>숙소</dt><dd>키트 비용 회수 + 추가 수입</dd></div>
+        <div><dt>가게</dt><dd>손님에게 드리는 우리 가게만의 혜택</dd></div>
         <div><dt>포옥드림</dt><dd>광고비 없는 오프라인 체험 채널</dd></div>
       </dl>
     </article>
 
     <article class="win">
       <p class="win-no">02</p>
-      <h3>숙소를 촬영 장소로</h3>
-      <p>파트너 숙소 객실에서 사용 장면을 <b>정기적으로 촬영</b>해 숙소 이름과 함께 인스타그램 <b>@pookdream_sleep</b>·스토어에 소개해요. <span class="tbd">(예: 분기마다 · 가안)</span></p>
+      <h3>가게를 촬영 장소로</h3>
+      <p>포옥드림이 가게를 <b>정기적으로 촬영</b>해 인스타그램 <b>@pookdream_sleep</b>에 소개해요. <span class="tbd">(예: 분기마다 · 가안)</span></p>
       <dl>
-        <div><dt>숙소</dt><dd>돈 안 드는 지속 홍보</dd></div>
-        <div><dt>포옥드림</dt><dd>강릉 객실 실사용 콘텐츠</dd></div>
+        <div><dt>가게</dt><dd>돈 안 드는 지속 홍보</dd></div>
+        <div><dt>포옥드림</dt><dd>강릉 실사용 콘텐츠</dd></div>
       </dl>
     </article>
-
-    <div class="kit">
-      <p class="k">숙소가 받는 파트너 키트</p>
-      <ul>
-        <li>데일리핏 베개<small>할인가 <span class="tbd">(가안)</span></small></li>
-        <li>면 커버 2개<small>세탁 걱정 없이 교체</small></li>
-        <li>시트 보관용 라탄함<small>뺀 시트를 객실에</small></li>
-        <li>배지·QR 카드<small>숙소 이름 넣어 제작</small></li>
-      </ul>
-    </div>
   </section>
 
-  <!-- ⑤ 마케팅 혜택 -->
+  <!-- ⑥ 마케팅 혜택 -->
   <section style="padding-top:8px">
     <p class="eyebrow">마케팅 혜택</p>
-    <h2 class="h2" style="margin-top:10px">비슷해 보이는 숙소들 사이,<br><span class="mark">손님 몸에 맞춰 주는 곳.</span></h2>
-    <p class="lead" style="margin-top:12px">어디든 예쁜 숙소는 많아요. 손님 한 분 한 분에게 맞춰 주는 순간, 우리 숙소는 ‘온리원’이 돼요.</p>
+    <h2 class="h2" style="margin-top:10px">비슷해 보이는 가게들 사이,<br><span class="mark">손님에게 맞춰 주는 곳.</span></h2>
+    <p class="lead" style="margin-top:12px">어디든 예쁜 가게는 많아요. 손님 한 분 한 분에게 맞춰 주는 순간, 우리 가게는 ‘온리원’이 돼요.</p>
 
     <div class="benefit">
-      <p class="k">예약 페이지·소개글에 그대로 쓰는 문구</p>
-      <p class="v">“베개 높이를<br>직접 맞추는 숙소”</p>
-      <button class="btn btn-line mini" type="button" onclick="copyText('베개 높이를 직접 맞추는 숙소', this)">문구 복사하기</button>
+      <p class="k">소개글·예약 페이지에 그대로 쓰는 문구</p>
+      <p class="v">“베개 높이를<br>직접 맞춰 보는 가게”</p>
+      <button class="btn btn-line mini" type="button" onclick="copyText('베개 높이를 직접 맞춰 보는 가게', this)">문구 복사하기</button>
     </div>
 
     <div class="benefit">
-      <p class="k">숙소 이름이 들어간 투숙객 할인 코드</p>
-      <span class="code" id="codeDemo">STAY-솔향기펜션</span>
-      <p>손님이 집에서도 같은 베개를 살 때 쓰는 코드예요. 숙소 이름이 함께 알려지고, 이 코드로 팔린 만큼 수익 일부가 숙소로 돌아가요. 할인율·배분 비율은 <span class="tbd">(가안)</span> 협의 후 정해요.</p>
-      <p class="note" style="margin-top:6px">* 위 숙소 이름은 예시예요.</p>
+      <p class="k">가게 이름이 들어간 전용 할인 코드</p>
+      <span class="code">STAY-바다커피</span>
+      <p>손님이 집에서도 같은 베개를 살 때 쓰는 코드예요. 코드와 함께 가게 이름도 알려져요. 할인율은 <span class="tbd">(가안)</span> 협의 후 정해요.</p>
+      <p class="note" style="margin-top:6px">* 위 가게 이름은 예시예요.</p>
     </div>
-  </section>
-
-  <!-- ⑥ 시작 방법 -->
-  <section class="start">
-    <p class="eyebrow">시작 방법</p>
-    <h2 class="h2" style="margin-top:10px">부담 없이,<br>객실 몇 개부터.</h2>
-    <div class="price">
-      <div><p class="k">시작 규모</p><p class="v">객실 2~3개</p></div>
-      <div><p class="k">키트 1개당</p><p class="v">25,000원 선</p><p class="note" style="font-size:13px">일반 판매가의 절반 <span class="tbd">(가안)</span></p></div>
-    </div>
-    <ol class="steps3">
-      <li>아래 신청서 작성</li>
-      <li>포옥드림이 연락드려 키트·QR 카드 준비</li>
-      <li>객실에 베개와 QR 카드 두기</li>
-    </ol>
-    <p class="note" style="margin-top:14px">키트 = 베개 + 면 커버 2개 + 시트 보관용 라탄함. 진행 순서와 가격은 모두 가안이며, 상담 후 확정돼요.</p>
-    <p class="serif" style="margin-top:36px;font-size:21px;line-height:1.55">강릉에서 시작한 수면 브랜드가<br>작은 숙소들과 함께 만드는<br><span class="mark">‘잠 잘 자는 강릉 여행’</span></p>
   </section>
 
   <!-- ⑦ 신청 폼 -->
   <section class="apply" id="apply">
     <div id="formWrap">
-      <p class="eyebrow">파트너 숙소 신청</p>
+      <p class="eyebrow">파트너 가게 신청</p>
       <h2 class="h2" style="margin-top:10px">네 가지만 알려 주세요.</h2>
       <form id="applyForm" novalidate>
         <label>성함<input name="name" autocomplete="name" placeholder="예: 김포옥" required></label>
-        <label>숙소 이름<input name="stay" maxlength="20" placeholder="예: 솔향기펜션" required></label>
+        <label>가게 이름<input name="stay" maxlength="20" placeholder="예: 바다커피" required></label>
         <label>연락처<input name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="010-0000-0000" required></label>
-        <label>객실 수
-          <select name="rooms" required>
+        <label>업종
+          <select name="kind" required>
             <option value="">선택해 주세요</option>
-            <option>1~5개</option><option>6~10개</option><option>11~15개</option><option>16개 이상</option>
+            <option>숙소 (펜션·게스트하우스)</option><option>카페</option><option>체험 공간</option><option>기타</option>
           </select>
         </label>
         <p class="err" id="err" role="alert"></p>
-        <button class="btn btn-navy" type="submit">파트너 숙소 신청하기</button>
+        <button class="btn btn-navy" type="submit">파트너 가게 신청하기</button>
         <p class="note">프로토타입이에요. 입력한 내용은 어디에도 전송·저장되지 않아요.</p>
       </form>
     </div>
@@ -252,20 +244,25 @@
       <h2 class="h1"><span id="doneName"></span> 사장님,<br>신청해 주셔서 고마워요.</h2>
       <p class="lead"><b id="doneStay" style="color:var(--ink)"></b> 이름으로 손님 화면과 QR 카드를 미리 볼 수 있어요.</p>
       <div class="links">
-        <a class="btn btn-navy" id="doneGuest" href="guest.html">우리 숙소 손님 화면 보기</a>
-        <a class="btn btn-line" id="doneCard" href="card.html">우리 숙소 QR 카드 보기</a>
+        <a class="btn btn-navy" id="doneGuest" href="guest.html">우리 가게 손님 화면 보기</a>
+        <a class="btn btn-line" id="doneCard" href="card.html">우리 가게 QR 카드 보기</a>
       </div>
       <p class="note" style="margin-top:18px">프로토타입이라 실제로 접수되지는 않았어요.</p>
     </div>
   </section>
 
+  <!-- 마무리 -->
+  <div class="closing">
+    <p>강릉에서 시작한 수면 브랜드가<br>작은 가게들과 함께 만드는<br><span class="mark">‘잘 자는 강릉’</span></p>
+  </div>
+
   <footer>
-    포옥드림 · 인스타그램 <a href="#">@pookdream_sleep</a> · <a href="#">스토어</a><br>
-    포옥스테이는 가칭이며, 이 페이지의 가격·혜택은 모두 가안이에요.<br>
+    포옥드림 · 인스타그램 <a href="#">@pookdream_sleep</a><br>
+    포옥스테이는 가칭이며, 운영 방식·혜택은 모두 가안이에요.<br>
     <a href="index.html">← 프로토타입 목차</a>
   </footer>
 
-  <div class="sticky" id="sticky"><a class="btn btn-navy" href="#apply">파트너 숙소 신청하기</a></div>
+  <div class="sticky hide" id="sticky"><a class="btn btn-navy" href="#apply">파트너 가게 신청하기</a></div>
 </div>
 
 <script src="common.js"></script>
@@ -277,7 +274,7 @@
     const d = Object.fromEntries(new FormData(form));
     for (const k in d) d[k] = d[k].trim();
     const err = document.getElementById('err');
-    if (!d.name || !d.stay || !d.phone || !d.rooms){ err.textContent = '네 칸을 모두 채워 주세요.'; return; }
+    if (!d.name || !d.stay || !d.phone || !d.kind){ err.textContent = '네 칸을 모두 채워 주세요.'; return; }
     if (d.phone.replace(/\D/g,'').length < 9){ err.textContent = '연락처를 다시 확인해 주세요.'; return; }
     err.textContent = '';
     document.getElementById('doneName').textContent = d.name;
@@ -289,7 +286,6 @@
     document.getElementById('apply').scrollIntoView({behavior:'smooth'});
   });
 
-  // 신청 섹션이 보이면 하단 고정 버튼 숨김
   // 히어로 버튼이 화면 위로 지나간 뒤 ~ 신청 섹션 전까지만 하단 고정 버튼 노출
   const sticky = document.getElementById('sticky');
   const heroBtn = document.querySelector('.hero .btn'), apply = document.getElementById('apply');
