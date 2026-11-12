@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>오늘 밤 베개 맞추기</title>
+<link rel="stylesheet" href="common.css">
+<script>
+/* ============================================================
+   조절 규칙 설정값 (가안) — 여기만 바꾸면 결과가 바뀝니다
+   ============================================================ */
+const CONFIG = {
+  baseSheets:   { back: 2, side: 3, stomach: 1 },   // Q1 자세별 기본 시트 수
+  preferAdjust: { low: -1, mid: 0, high: +1 },      // Q2 평소 높이 보정
+  minSheets: 1,
+  maxSheets: 3,
+  discountPrefix: 'STAY-',                           // 할인 코드 = 접두어 + 숙소이름
+  buyUrl: '#',                                       // 구매 링크 (비워 둠)
+  defaultStay: '이 숙소',                            // ?stay= 가 없을 때
+};
+</script>
+<style>
+  body{background:var(--bg)}
+  .app{display:flex;flex-direction:column;min-height:100vh;min-height:100dvh}
+  .top{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;min-height:60px}
+  .back{background:none;border:0;font:inherit;font-size:16px;color:var(--sub);min-height:44px;padding:0 8px;cursor:pointer}
+  .back[hidden]{display:block;visibility:hidden}
+  .dots{display:flex;gap:6px}
+  .dots i{width:8px;height:8px;border-radius:50%;background:var(--line)}
+  .dots i.on{background:var(--navy)}
+  .stay-chip{font-size:13px;color:var(--sub);max-width:46%;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  .screen{display:none;flex:1;flex-direction:column;padding:8px 24px calc(28px + env(safe-area-inset-bottom));animation:in .28s ease}
+  .screen.on{display:flex}
+  @keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .grow{flex:1}
+  .q-no{font-family:var(--serif);color:var(--faint);font-size:16px;margin-top:12px}
+  .q{font-size:27px;font-weight:700;line-height:1.42;letter-spacing:-0.03em;margin:8px 0 28px}
+  .opts{display:grid;gap:12px}
+  .opt{display:flex;align-items:center;gap:16px;width:100%;min-height:76px;padding:14px 20px;border-radius:16px;border:1.5px solid var(--line);background:var(--paper);font:inherit;font-size:20px;font-weight:500;color:var(--ink);text-align:left;cursor:pointer;transition:border-color .15s,background .15s}
+  .opt:active,.opt.sel{border-color:var(--navy);background:#eef0f5}
+  .opt svg{flex:none;width:44px;height:44px}
+  .opt small{display:block;font-size:14px;color:var(--sub);font-weight:400}
+
+  /* 시작 */
+  .start-photo{margin:0 -24px 24px}
+  .welcome{font-size:15px;color:var(--sub)}
+  .welcome b{color:var(--ink)}
+
+  /* 결과 */
+  .result-k{font-size:16px;color:var(--sub);margin-top:6px}
+  .result-v{font-family:var(--serif);font-size:34px;line-height:1.35;letter-spacing:-0.03em;margin:4px 0 20px}
+  .result-v b{font-weight:600;color:var(--navy)}
+  .stack{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:18px 18px 16px;display:grid;grid-template-columns:1fr 120px;gap:16px;align-items:center}
+  .stack .bars{display:grid;gap:6px}
+  .stack .bar{height:20px;border-radius:10px;background:var(--sheet);border:1.5px solid #9fbad6}
+  .stack .bar.off{background:transparent;border:1.5px dashed var(--line)}
+  .stack .base{height:8px;border-radius:4px;background:#d9d3c9;margin-top:2px}
+  .stack p{font-size:14px;color:var(--sub);line-height:1.5}
+  .stack p b{color:var(--ink);font-size:16px}
+  .neck{margin-top:12px;display:grid;grid-template-columns:72px 1fr;gap:14px;align-items:center;background:#efe9df;border-radius:16px;padding:14px 16px}
+  .neck .crop{border-radius:50%;aspect-ratio:1/1!important}
+  .neck b{display:block;font-size:17px}
+  .neck span{font-size:14px;color:var(--sub)}
+  .how{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:18px 0 6px}
+  .how figure{font-size:13px;color:var(--sub);text-align:center;line-height:1.4}
+  .how .crop{border-radius:10px;margin-bottom:6px;aspect-ratio:1/1!important}
+
+  .adjust-box{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:22px 20px;margin-top:6px}
+  .adjust-box .big{font-family:var(--serif);font-size:28px;line-height:1.4;margin-bottom:10px}
+
+  /* 마지막 */
+  .end-photo{margin:0 -24px 24px}
+  .codebox{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--paper);border:1.5px dashed #c9bfae;border-radius:14px;padding:14px 16px;margin:22px 0 6px}
+  .codebox code{font-family:ui-monospace,Consolas,monospace;font-size:19px;letter-spacing:.03em;overflow-wrap:anywhere}
+  .codebox button{flex:none;min-height:44px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:#fff;font:inherit;font-size:15px;cursor:pointer}
+  .mysetting{margin-top:18px;font-size:15px;color:var(--sub);border-top:1px solid var(--line);padding-top:14px}
+  .actions{display:grid;gap:10px;margin-top:24px}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <button class="back" id="backBtn" type="button" hidden>‹ 이전</button>
+    <div class="dots" id="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+    <span class="stay-chip" id="stayChip"></span>
+  </div>
+
+  <!-- 시작 -->
+  <section class="screen" data-s="start">
+    <div class="start-photo crop" data-crop="11.webp 0 440 860 1180" data-alt="데일리핏 베개를 베고 자는 모습"></div>
+    <p class="welcome"><b class="js-stay"></b>에 오신 걸 환영해요</p>
+    <h1 class="h1" style="margin:8px 0 12px">오늘 밤 베개,<br>내 몸에 맞춰 볼까요?</h1>
+    <p class="lead">질문 3개에 답하면, 베개 안 시트를 몇 장 넣을지 알려 드려요.</p>
+    <div class="grow"></div>
+    <button class="btn btn-navy" type="button" data-go="q1" style="margin-top:28px">시작하기</button>
+  </section>
+
+  <!-- Q1 -->
+  <section class="screen" data-s="q1" data-step="1">
+    <p class="q-no">Q1</p>
+    <h2 class="q">주로 어떻게<br>주무세요?</h2>
+    <div class="opts">
+      <button class="opt" type="button" data-q="pose" data-v="back"><svg viewBox="0 0 44 44" fill="none" stroke="#1f2a44" stroke-width="2"><rect x="3" y="26" width="38" height="6" rx="3"/><circle cx="10" cy="20" r="5"/><path d="M15 22h24" stroke-linecap="round"/></svg>바로 누워서</button>
+      <button class="opt" type="button" data-q="pose" data-v="side"><svg viewBox="0 0 44 44" fill="none" stroke="#1f2a44" stroke-width="2"><rect x="3" y="26" width="38" height="6" rx="3"/><circle cx="10" cy="17" r="5"/><path d="M15 19c6 0 8 4 13 4s8-4 11-4" stroke-linecap="round"/></svg>옆으로</button>
+      <button class="opt" type="button" data-q="pose" data-v="stomach"><svg viewBox="0 0 44 44" fill="none" stroke="#1f2a44" stroke-width="2"><rect x="3" y="26" width="38" height="6" rx="3"/><circle cx="10" cy="21" r="5"/><path d="M15 24h24M30 20l4 4" stroke-linecap="round"/></svg>엎드려서</button>
+    </div>
+  </section>
+
+  <!-- Q2 -->
+  <section class="screen" data-s="q2" data-step="2">
+    <p class="q-no">Q2</p>
+    <h2 class="q">평소 베개는<br>어떤 게 편하세요?</h2>
+    <div class="opts">
+      <button class="opt" type="button" data-q="prefer" data-v="low"><svg viewBox="0 0 44 44" fill="none" stroke="#1f2a44" stroke-width="2"><path d="M5 30c4-4 30-4 34 0z"/></svg>낮은 편</button>
+      <button class="opt" type="button" data-q="prefer" data-v="mid"><svg viewBox="0 0 44 44" fill="none" stroke="#1f2a44" stroke-width="2"><path d="M5 30c2-8 32-8 34 0z"/></svg>보통</button>
+      <button class="opt" type="button" data-q="prefer" data-v="high"><svg viewBox="0 0 44 44" fill="none" stroke="#1f2a44" stroke-width="2"><path d="M5 30c1-13 33-13 34 0z"/></svg>높은 편</button>
+    </div>
+  </section>
+
+  <!-- Q3 -->
+  <section class="screen" data-s="q3" data-step="3">
+    <p class="q-no">Q3</p>
+    <h2 class="q">자고 나면 목이<br>뻐근한 편인가요?</h2>
+    <div class="opts">
+      <button class="opt" type="button" data-q="neck" data-v="yes">네</button>
+      <button class="opt" type="button" data-q="neck" data-v="no">아니요</button>
+    </div>
+  </section>
+
+  <!-- 결과 -->
+  <section class="screen" data-s="result">
+    <p class="result-k">추천 높이</p>
+    <h2 class="result-v">시트 <b class="js-n"></b>장을<br>넣어 주세요</h2>
+    <div class="stack">
+      <div><div class="bars js-bars"></div><div class="base"></div></div>
+      <p><b class="js-n-text"></b><br><span class="js-off-text"></span></p>
+    </div>
+    <div class="neck js-neck" hidden>
+      <div class="crop" data-crop="8.webp 62 1205 202 1345" data-alt="넥서포트존 시트"></div>
+      <div><b>목 쪽을 조금 더 채워 주세요</b><span>넥서포트존 시트의 충전재를 목 쪽으로 모아 주면 돼요.</span></div>
+    </div>
+    <div class="how">
+      <figure><div class="crop" data-crop="17.webp 40 322 245 527" data-alt="지퍼를 여는 모습"></div>지퍼를 열고</figure>
+      <figure><div class="crop" data-crop="17.webp 262 562 466 766" data-alt="시트를 빼는 모습"></div>시트를 넣고 빼고</figure>
+      <figure><div class="crop" data-crop="17.webp 40 800 245 1005" data-alt="지퍼를 닫은 베개"></div>지퍼를 닫아요</figure>
+    </div>
+    <div class="grow"></div>
+    <button class="btn btn-navy" type="button" data-go="feedback" style="margin-top:20px">맞췄어요, 누워 볼게요</button>
+  </section>
+
+  <!-- 피드백 -->
+  <section class="screen" data-s="feedback">
+    <p class="q-no">잠깐 누워 본 뒤</p>
+    <h2 class="q">잘 맞나요?</h2>
+    <div class="opts">
+      <button class="opt" type="button" data-fb="good">딱 맞아요</button>
+      <button class="opt" type="button" data-fb="high">아직 높아요</button>
+      <button class="opt" type="button" data-fb="low">아직 낮아요</button>
+    </div>
+    <p class="note" style="margin-top:18px">사용감은 체형과 습관에 따라 달라요. 편한 쪽으로 한 장씩 바꿔 보세요.</p>
+  </section>
+
+  <!-- 조절 안내 -->
+  <section class="screen" data-s="adjust">
+    <p class="q-no js-adj-k"></p>
+    <div class="adjust-box">
+      <p class="big js-adj-title"></p>
+      <p class="lead js-adj-body" style="font-size:16px"></p>
+    </div>
+    <div class="stack" style="margin-top:12px">
+      <div><div class="bars js-bars"></div><div class="base"></div></div>
+      <p><b class="js-n-text"></b><br><span class="js-off-text"></span></p>
+    </div>
+    <div class="grow"></div>
+    <button class="btn btn-navy" type="button" data-go="feedback" style="margin-top:24px">다시 누워 볼게요</button>
+  </section>
+
+  <!-- 마지막 -->
+  <section class="screen" data-s="end">
+    <div class="end-photo crop" data-crop="9.webp 40 690 820 1180" data-alt="데일리핏 베개"></div>
+    <p class="eyebrow">포옥드림 파트너 숙소</p>
+    <h2 class="h1" style="font-size:26px;margin:8px 0 12px"><span class="js-stay-topic"></span><br>포옥드림 파트너 숙소예요.</h2>
+    <p class="lead">오늘 밤이 편하셨다면,<br>집에서도 같은 베개로.</p>
+    <div class="codebox">
+      <code id="code"></code>
+      <button type="button" id="copyBtn">복사</button>
+    </div>
+    <p class="note">할인 코드 예시예요. 할인율은 <span class="tbd">(가안)</span></p>
+    <p class="mysetting">오늘 내 설정 · <b class="js-summary" style="color:var(--ink)"></b></p>
+    <div class="actions">
+      <a class="btn btn-navy" id="buyBtn" href="#">데일리핏 보러 가기</a>
+      <button class="btn btn-ghost" type="button" id="restart">처음부터 다시 하기</button>
+    </div>
+  </section>
+</div>
+
+<script src="common.js"></script>
+<script>
+const stay = getStay(CONFIG.defaultStay);
+const state = { pose:null, prefer:null, neck:null, n:null };
+const history_ = [];
+let current = null;
+
+document.title = `${stay} · 오늘 밤 베개 맞추기`;
+document.querySelectorAll('.js-stay').forEach(el => el.textContent = stay);
+document.getElementById('stayChip').textContent = stay;
+// 받침 유무로 은/는 선택 (한글이 아니면 '은(는)')
+function topic(word){
+  const c = word.charCodeAt(word.length - 1);
+  if (c < 0xAC00 || c > 0xD7A3) return word + '은(는)';
+  return word + ((c - 0xAC00) % 28 ? '은' : '는');
+}
+document.querySelectorAll('.js-stay-topic').forEach(el => el.textContent = topic(stay));
+document.getElementById('code').textContent = CONFIG.discountPrefix + stay.replace(/\s+/g,'');
+document.getElementById('buyBtn').href = CONFIG.buyUrl;
+
+function clamp(n){ return Math.max(CONFIG.minSheets, Math.min(CONFIG.maxSheets, n)); }
+function recommend(){ return clamp(CONFIG.baseSheets[state.pose] + CONFIG.preferAdjust[state.prefer]); }
+
+function renderStack(){
+  document.querySelectorAll('.js-n').forEach(el => el.textContent = state.n);
+  document.querySelectorAll('.js-bars').forEach(el => {
+    el.innerHTML = '';
+    for (let i = CONFIG.maxSheets; i >= 1; i--){
+      const b = document.createElement('div');
+      b.className = 'bar' + (i > state.n ? ' off' : '');
+      el.appendChild(b);
+    }
+  });
+  const off = CONFIG.maxSheets - state.n;
+  document.querySelectorAll('.js-n-text').forEach(el => el.textContent = `시트 ${state.n}장 넣기`);
+  document.querySelectorAll('.js-off-text').forEach(el =>
+    el.textContent = off > 0 ? `뺀 ${off}장은 객실 라탄함에 보관해 주세요.` : '시트 3장을 모두 넣어요.');
+  document.querySelector('.js-neck').hidden = state.neck !== 'yes';
+  document.querySelector('.js-summary').textContent =
+    `시트 ${state.n}장` + (state.neck === 'yes' ? ' + 목 쪽 조금 더' : '');
+}
+
+function show(name, push = true){
+  if (push && current) history_.push(current);
+  current = name;
+  document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.dataset.s === name));
+  const step = +(document.querySelector(`.screen[data-s="${name}"]`).dataset.step || 0);
+  const inQuiz = step > 0;
+  document.getElementById('dots').style.visibility = inQuiz ? 'visible' : 'hidden';
+  document.querySelectorAll('#dots i').forEach((d,i) => d.classList.toggle('on', i < step));
+  document.getElementById('backBtn').hidden = name === 'start';
+  window.scrollTo(0,0);
+}
+
+document.getElementById('backBtn').onclick = () => { if (history_.length) show(history_.pop(), false); };
+
+document.querySelectorAll('[data-go]').forEach(b => b.onclick = () => show(b.dataset.go));
+
+document.querySelectorAll('[data-q]').forEach(b => b.onclick = () => {
+  state[b.dataset.q] = b.dataset.v;
+  b.parentElement.querySelectorAll('.opt').forEach(o => o.classList.toggle('sel', o === b));
+  const next = { pose:'q2', prefer:'q3', neck:'result' }[b.dataset.q];
+  if (next === 'result'){ state.n = recommend(); renderStack(); }
+  setTimeout(() => show(next), 160);
+});
+
+document.querySelectorAll('[data-fb]').forEach(b => b.onclick = () => {
+  const fb = b.dataset.fb;
+  if (fb === 'good'){ show('end'); return; }
+  const k = document.querySelector('.js-adj-k'), t = document.querySelector('.js-adj-title'), body = document.querySelector('.js-adj-body');
+  if (fb === 'high'){
+    k.textContent = '아직 높다면';
+    if (state.n > CONFIG.minSheets){ state.n--; t.textContent = '시트 1장을 빼 주세요'; body.textContent = `이제 ${state.n}장이에요. 뺀 시트는 라탄함에 넣어 두세요.`; }
+    else { t.textContent = '이미 가장 낮은 높이예요'; body.textContent = '남은 시트 안 충전재를 조금 덜어 내면 더 낮아져요.'; }
+  } else {
+    k.textContent = '아직 낮다면';
+    if (state.n < CONFIG.maxSheets){ state.n++; t.textContent = '시트 1장을 넣어 주세요'; body.textContent = `이제 ${state.n}장이에요. 라탄함에 있는 시트를 꺼내 넣어 주세요.`; }
+    else { t.textContent = '이미 가장 높은 높이예요'; body.textContent = '목 쪽이 허전하면 넥서포트존 시트의 충전재를 목 쪽으로 모아 보세요.'; }
+  }
+  renderStack();
+  show('adjust');
+});
+
+document.getElementById('copyBtn').onclick = e => copyText(document.getElementById('code').textContent, e.currentTarget);
+document.getElementById('restart').onclick = () => {
+  Object.keys(state).forEach(k => state[k] = null);
+  document.querySelectorAll('.opt.sel').forEach(o => o.classList.remove('sel'));
+  history_.length = 0; current = null; show('start');
+};
+
+show('start');
+</script>
+</body>
+</html>

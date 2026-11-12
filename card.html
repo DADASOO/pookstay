@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>체크인 QR 카드 (A6)</title>
+<link rel="stylesheet" href="common.css">
+<style>
+  @page{size:105mm 148mm;margin:0}
+  body{background:#e9e4dc;font-size:16px}
+  .tools{max-width:430px;margin:0 auto;padding:20px 16px 8px;display:grid;gap:10px}
+  .tools label{display:grid;gap:6px;font-size:15px;font-weight:500}
+  .tools input{font:inherit;font-size:17px;min-height:54px;padding:10px 14px;border-radius:12px;border:1.5px solid var(--line);background:#fff}
+  .tools .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .tools .btn{min-height:54px;font-size:16px}
+  .tools .note{text-align:center}
+
+  .sheet-wrap{display:flex;justify-content:center;padding:16px 16px 48px}
+  /* A6 = 105 × 148mm */
+  .card{width:105mm;height:148mm;background:var(--bg);color:var(--ink);padding:10mm 9mm 8mm;display:flex;flex-direction:column;box-shadow:0 6px 24px rgba(40,35,25,.15);position:relative;overflow:hidden}
+  .card .eyebrow{font-size:9pt;letter-spacing:.04em}
+  .card h1{font-family:var(--serif);font-weight:400;font-size:21pt;line-height:1.35;letter-spacing:-0.03em;margin:3mm 0 2mm}
+  .card .sub{font-size:9.5pt;color:var(--sub);line-height:1.55}
+  .qr-row{display:grid;grid-template-columns:38mm 1fr;gap:5mm;align-items:center;margin:6mm 0 5mm}
+  .qr{width:38mm;height:38mm;border-radius:3mm;background:#fff;padding:2.5mm;display:flex;align-items:center;justify-content:center}
+  .qr svg{width:100%;height:100%;display:block}
+  .qr.empty{border:1.2px dashed #a99f8f;font-size:8pt;color:var(--faint);text-align:center}
+  .steps{list-style:none;font-size:9.5pt;line-height:1.45;display:grid;gap:2.2mm}
+  .steps li{display:grid;grid-template-columns:5mm 1fr}
+  .steps span{font-family:var(--serif);color:var(--faint);font-size:8.5pt}
+  .url{font-family:ui-monospace,Consolas,monospace;font-size:6.5pt;color:var(--faint);word-break:break-all;margin-top:-2mm}
+  .stay-line{margin-top:auto;border-top:1px solid var(--line);padding-top:4mm;display:flex;align-items:flex-end;justify-content:space-between;gap:4mm}
+  .stay-line .k{font-size:8pt;color:var(--faint)}
+  .stay-line .v{font-family:var(--serif);font-size:14pt;border-bottom:1px solid #b7ad9d;min-width:44mm;padding-bottom:1mm;min-height:8mm}
+  .stay-line .brand{font-size:8pt;color:var(--sub);text-align:right;line-height:1.4}
+  .keep{font-size:8.5pt;color:var(--sub);background:#efe9df;border-radius:2mm;padding:2.5mm 3mm;margin-bottom:4mm}
+
+  @media print{
+    body{background:none}
+    .tools{display:none}
+    .sheet-wrap{padding:0}
+    .card{box-shadow:none}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+  @media screen and (max-width:440px){
+    /* 폰 화면에서는 카드 비율 그대로 축소해 미리보기 */
+    .sheet-wrap{padding:8px 0 40px}
+    .card{zoom:0.86}
+  }
+</style>
+</head>
+<body>
+<div class="tools">
+  <label>숙소 이름<input id="stayInput" maxlength="20" placeholder="예: 솔향기펜션"></label>
+  <label>사이트 주소 <span class="note" style="font-weight:400">· 웹에 올리면 자동으로 채워져요</span><input id="baseInput" inputmode="url" placeholder="https://pookstay.netlify.app/"></label>
+  <p class="err" id="baseWarn" style="font-size:14px;color:#a1452f"></p>
+  <div class="row">
+    <button class="btn btn-navy" type="button" onclick="print()">인쇄하기 (A6)</button>
+    <a class="btn btn-line" id="toGuest" href="guest.html">손님 화면 열기</a>
+  </div>
+  <p class="note">QR을 폰 카메라로 찍어 손님 화면이 열리는지 확인한 뒤 인쇄하세요. · <a href="index.html">목차</a></p>
+</div>
+
+<div class="sheet-wrap">
+  <article class="card">
+    <p class="eyebrow">체크인 안내 · 포옥드림 파트너 숙소</p>
+    <h1>베개 높이,<br>직접 맞추세요</h1>
+    <p class="sub">이 방의 베개는 안에 든 시트를 빼고 더해<br>높이를 바꿀 수 있어요.</p>
+
+    <div class="qr-row">
+      <div class="qr" id="qr" role="img" aria-label="손님 화면 QR 코드"></div>
+      <ol class="steps">
+        <li><span>01</span>QR을 폰 카메라로 찍기</li>
+        <li><span>02</span>질문 3개에 답하기</li>
+        <li><span>03</span>안내대로 시트 넣고 빼기</li>
+      </ol>
+    </div>
+    <p class="url" id="url"></p>
+
+    <p class="keep" style="margin-top:4mm">뺀 시트는 객실의 라탄함에 넣어 두세요.</p>
+
+    <div class="stay-line">
+      <div><p class="k">숙소 이름</p><p class="v" id="stayName"></p></div>
+      <p class="brand">pookdream<br>@pookdream_sleep</p>
+    </div>
+  </article>
+</div>
+
+<script src="common.js"></script>
+<script src="vendor/qrcode.min.js"></script>
+<script>
+  const input = document.getElementById('stayInput');
+  const baseInput = document.getElementById('baseInput');
+
+  // 기본 사이트 주소 = 지금 이 카드가 열린 폴더 (웹에 올리면 그 주소)
+  const here = new URL('.', location.href).href;
+  baseInput.value = new URLSearchParams(location.search).get('base') || here;
+
+  // 텍스트 → QR SVG (오류 정정 M, 인쇄용 벡터)
+  function qrSvg(text){
+    const qr = qrcode(0, 'M');           // 0 = 길이에 맞춰 버전 자동 선택
+    qr.addData(text);
+    qr.make();
+    const n = qr.getModuleCount();
+    let d = '';
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++)
+      if (qr.isDark(r, c)) d += `M${c} ${r}h1v1h-1z`;
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${n} ${n}" shape-rendering="crispEdges"><path d="${d}" fill="#1f2a44"/></svg>`;
+  }
+
+  function guestUrl(stay){
+    const raw = baseInput.value.trim();
+    if (!/^https?:\/\/[^/]+/i.test(raw)) return null;
+    let base;
+    try { base = new URL(raw); } catch { return null; }
+    // 폴더 주소로 맞춤: .../card.html → .../ , .../pookstay → .../pookstay/
+    if (!base.pathname.endsWith('/'))
+      base.pathname = /\.[a-z0-9]+$/i.test(base.pathname) ? base.pathname.replace(/[^/]*$/, '') : base.pathname + '/';
+    base.search = ''; base.hash = '';
+    return new URL(withStay('guest.html', stay), base).href;   // 한글은 %인코딩 → 어떤 QR 앱도 읽음
+  }
+
+  function render(){
+    const stay = input.value.trim().slice(0,20);
+    document.getElementById('stayName').textContent = stay;
+    document.getElementById('toGuest').href = withStay('guest.html', stay);
+
+    const url = guestUrl(stay), qrEl = document.getElementById('qr'), warn = document.getElementById('baseWarn');
+    if (url){
+      qrEl.classList.remove('empty');
+      qrEl.innerHTML = qrSvg(url);
+      document.getElementById('url').textContent = decodeURI(url);
+      const host = new URL(url).hostname;
+      warn.textContent = /^(localhost|127\.|192\.168\.|10\.)/.test(host)
+        ? '지금은 이 컴퓨터 주소라 손님 폰에서는 열리지 않아요. 웹에 올린 뒤 그 주소로 인쇄하세요.' : '';
+    } else {
+      qrEl.classList.add('empty');
+      qrEl.textContent = '사이트 주소를 넣으면 QR이 생겨요';
+      document.getElementById('url').textContent = '';
+      warn.textContent = '사이트 주소는 https:// 로 시작해야 해요.';
+    }
+
+    const u = new URL(location.href);
+    stay ? u.searchParams.set('stay', stay) : u.searchParams.delete('stay');
+    baseInput.value.trim() && baseInput.value.trim() !== here ? u.searchParams.set('base', baseInput.value.trim()) : u.searchParams.delete('base');
+    history.replaceState(null, '', u);
+  }
+  input.value = getStay('');
+  input.addEventListener('input', render);
+  baseInput.addEventListener('input', render);
+  render();
+</script>
+</body>
+</html>
