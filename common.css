@@ -40,7 +40,7 @@ a{color:inherit}
 .btn-ghost{background:transparent;color:var(--sub);min-height:48px;font-weight:500;font-size:16px}
 
 /* 사진 크롭 (common.js 가 data-crop 을 읽어 배치) */
-.crop{position:relative;overflow:hidden;background:#ece6dc}
+.crop{position:relative;overflow:hidden;background:#ece6dc;flex-shrink:0}
 .crop>img{position:absolute;max-width:none}
 
 hr.rule{border:0;border-top:1px solid var(--line)}

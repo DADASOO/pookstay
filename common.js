@@ -18,9 +18,12 @@ function applyCrops(root = document){
     img.src = 'img/' + src;
     img.alt = el.dataset.alt || '';
     img.loading = 'lazy';
+    // 위치는 '이미지 자신의 크기' 기준으로 이동 → 틀 높이가 브라우저마다 달라져도(iOS Safari)
+    // 잘라 낸 위쪽(상세페이지 글자 등)이 다시 드러나지 않음
     img.style.width = (W / cw * 100) + '%';
-    img.style.left  = (-x0 / cw * 100) + '%';
-    img.style.top   = (-y0 / ch * 100) + '%';
+    img.style.left = '0';
+    img.style.top  = '0';
+    img.style.transform = `translate(${-x0 / W * 100}%, ${-y0 / H * 100}%)`;
     el.appendChild(img);
     el.dataset.done = '1';
   });
